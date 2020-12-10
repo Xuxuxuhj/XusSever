@@ -1,8 +1,7 @@
 #pragma once
 #include<vector>
 #include"..//base/noncopyable.h"
-class Channel;
-class TimerManager;
+#include"channel.h"
 
 class Epoll: noncopyable
 {
