@@ -2,6 +2,7 @@
 #include<unistd.h>
 #include"..//base//log.h"
 #include"epoll.h"
+#include"timer.h"
 
 const int MAX_EVENT_NUM=4096;
 
