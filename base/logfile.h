@@ -20,10 +20,10 @@ class LogFile:noncopyable
 public:
     LogFile(const char* filename=NULL, int flushInterval=100);
     ~LogFile();
-    void append(bool flush=false);//default flush every flushInterval
+    void append(const char* str, size_t len, bool doFlush=false);//default flush every flushInterval
 private:
     void flush();
-    void append_unlock();
+    void append_unlock(const char* str, size_t len);
     File *fd_;
     int count_;
     int flushInterval_;
