@@ -16,11 +16,19 @@ public:
         cur_+=len;
     }
     size_t avail(){
-        return sizeof(data_)-static_cast<size_t>(cur_-data_);
+        return sizeof(data_)-size();
+    }
+    void reset()
+    {
+        cur_=data_;
     }
     char *current()
     {
         return cur_;
+    }
+    size_t size()
+    {
+        return static_cast<size_t>(cur_-data_);
     }
 private:
     char data_[SIZE];
