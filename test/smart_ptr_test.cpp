@@ -19,5 +19,31 @@ int main()
         }
     }
     cout<<"test part2 end"<<endl;
+    {
+        xu::shared_ptr<int> p1;
+        xu::shared_ptr<int> p2(new int(1));
+        p1=std::move(p2);
+        if(!p2)
+            cout<<"p2 is empty()"<<endl;
+        else
+        {
+            cout<<"p2 is not empty()"<<"p2 points to:"<<*p2<<endl;
+        }
+        if(!p1)
+            cout<<"p1 is empty()"<<endl;
+        else
+        {
+            cout<<"p1 is not empty()"<<"p1 points to:"<<*p1<<endl;;
+        }
+        cout<<"after p1 reset"<<endl;
+        p1.reset();
+        if(!p1)
+            cout<<"p1 is empty()"<<endl;
+        else
+        {
+            cout<<"p1 is not empty()"<<"p1 points to:"<<*p1<<endl;;
+        }
+    }
+     cout<<"test part3 end"<<endl;
     return 0;
 }
