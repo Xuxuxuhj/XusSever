@@ -11,5 +11,5 @@ public:
     ThreadPool();
     ~ThreadPool();
     static void thread_create(int minThreadSize=MIN_THR_SIZE, int maxThreadSize=MAX_THR_SIZE, int maxQueueSize=MAX_QUEUE_SIZE);
-    static 
-}
+
+};

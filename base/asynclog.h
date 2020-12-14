@@ -15,9 +15,19 @@ public:
     typedef FixedBuffer<LARGE_BUFFER_SIZE> Buffer;
     AsyncLog();
     ~AsyncLog();
-    void start();
+    void start()
+    {
+        running_=true;
+        thread_.start();
+    }
+    void stop()
+    {
+        running_=false;
+        cond_.notify();
+        thread_.join();
+    }
     void append(const char* str, size_t len);
-    void threadfunc(xu::shared_ptr<void> args=xu::shared_ptr<void>());
+    void threadfunc();
 private:
     xu::shared_ptr<Buffer> curBuffer_;
     xu::shared_ptr<Buffer> nextBuffer_;

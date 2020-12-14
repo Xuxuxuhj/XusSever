@@ -1,10 +1,11 @@
 #include"asynclog.h"
+#include<functional>
 
 AsyncLog::AsyncLog():curBuffer_(new Buffer), 
     nextBuffer_(new Buffer),
     mutex_(),
     cond_(mutex_),
-    thread_(threadfunc, "log thread"),
+    thread_(std::bind(&AsyncLog::threadfunc, this), "log thread"),
     running_(false){
         curBuffer_->reset();
         nextBuffer_->reset();
@@ -25,7 +26,7 @@ void AsyncLog::append(const char* str, size_t len)
     }
     else
     {
-        buffers_.push_back(move(curBuffer_));//after move curBuffer should be a default empty shared_ptr
+        buffers_.push_back(std::move(curBuffer_));//after move curBuffer should be a default empty shared_ptr
         if(nextBuffer_==NULL)
         {
             nextBuffer_=new Buffer;
@@ -36,7 +37,7 @@ void AsyncLog::append(const char* str, size_t len)
     }
 }
 
-void AsyncLog::threadfunc(xu::shared_ptr<void> args)
+void AsyncLog::threadfunc()
 {
     xu::shared_ptr<AsyncLog::Buffer> buffer1(new AsyncLog::Buffer);
     xu::shared_ptr<AsyncLog::Buffer> buffer2(new AsyncLog::Buffer);
@@ -44,7 +45,7 @@ void AsyncLog::threadfunc(xu::shared_ptr<void> args)
     buffer2->reset();
     std::vector<xu::shared_ptr<Buffer>> buffersToWrite;
     buffersToWrite.reserve(16);
-    LogFile output();
+    LogFile output;
     running_=true;
     while(running_)
     {
@@ -62,7 +63,7 @@ void AsyncLog::threadfunc(xu::shared_ptr<void> args)
             buffersToWrite.erase(buffersToWrite.begin()+25, buffersToWrite.end());
         for(auto &sp:buffersToWrite)
         {
-            output->append(sp->data(), sp->size());
+            output.append(sp->data(), sp->size());
         }
         if(buffersToWrite.size()>2)
             buffersToWrite.resize(2);
@@ -79,4 +80,5 @@ void AsyncLog::threadfunc(xu::shared_ptr<void> args)
             buffersToWrite.pop_back();
         }
     }
+    output.flush();
 }
