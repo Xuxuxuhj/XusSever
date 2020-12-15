@@ -2,7 +2,7 @@
 #include"asynclog.h"
 
 static pthread_once_t once_init=PTHREAD_ONCE_INIT;
-static AsyncLog* asyncLog_;
+static AsyncLog* asyncLog_=NULL;
 
 void initAsyncLog()
 {
@@ -27,6 +27,6 @@ Logger::~Logger()
 void Logger::output()
 {
     pthread_once(&once_init, &initAsyncLog);
-    LogStream::Buffer& buf(logStream_.buffer());
+    const LogStream::Buffer& buf(logStream_.buffer());
     asyncLog_->append(buf.data(), buf.size());
 }

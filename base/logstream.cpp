@@ -9,7 +9,7 @@ LogStream& LogStream::operator<<(std::string &str)
     if(buffer_.avail()>str.size())
         buffer_.append(str.c_str(), str.size());
 }
-LogStream& LogStream::operator<<(char* str)
+LogStream& LogStream::operator<<(const char* str)
 {
      if(buffer_.avail()>strlen(str))
         buffer_.append(str, strlen(str));

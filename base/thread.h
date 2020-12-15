@@ -13,7 +13,8 @@ public:
     ~Thread();
     void start();
     int join();
-    bool running() const {  return running_;}
+    bool is_thread_alive();
+    bool started() const {  return started_;}
     pid_t tid() const { return tid_;}
     const std::string& name() const {return threadName_;}
 private:
@@ -21,7 +22,7 @@ private:
     std::string threadName_;
     CountDownLatch latch_;
     pthread_t tid_;
-    bool running_;
+    bool started_;
     bool joined_;
 };
 

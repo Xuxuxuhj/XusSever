@@ -5,6 +5,7 @@
 #include<pthread.h>
 #include<string.h>
 #include<sys/prctl.h>
+#include<signal.h>
 
 
 Thread::Thread(Functor &&func, const std::string& threadName):
@@ -12,12 +13,12 @@ Thread::Thread(Functor &&func, const std::string& threadName):
     threadName_(threadName),
     tid_(0),
     latch_(1),
-    running_(false),
+    started_(false),
     joined_(false){}
 
 Thread::~Thread()
 {
-    if(!joined_&&running_)
+    if(!joined_&&started_)
         pthread_detach(tid_);
 }
 
@@ -34,7 +35,7 @@ struct ThreadData{
         platch_->countDown();
         platch_->wait();
         assert(tid_!=0);
-        CurrentThread::cacheTid_=*tid_;//tid() 可能会出现问题
+        CurrentThread::cacheTid_=*tid_;//tid() / pthread_self()
         CurrentThread::threadName_=name_.empty()?CurrentThread::threadName_:name_.c_str();
         prctl(PR_SET_NAME, CurrentThread::threadName_);
     }
@@ -59,12 +60,12 @@ void* realThreadFunc(void* args)//真正给线程的函数
 
 void Thread::start()
 {
-    assert(!running_);
-    running_=true;
+    assert(!started_);
+    started_=true;
     ThreadData* data(new ThreadData(threadFunc_, threadName_, &latch_, &tid_));
     if(pthread_create(&tid_, NULL, &realThreadFunc, data))
     {
-        running_=false;
+        started_=false;
         delete data;
     }
     else
@@ -76,13 +77,22 @@ void Thread::start()
 }
 int Thread::join()
 {
-    assert(running_);
+    assert(started_);
     assert(!joined_);
     joined_=true;
     return pthread_join(tid_, NULL);
 }
 
-//////
+bool Thread::is_thread_alive()
+{
+    int ret = pthread_kill(tid_, 0);     //发0号信号，测试线程是否存活
+    if (ret == ESRCH) {
+        return false;
+    }
+    return true;
+}
+
+//////not used
 int gettid()//pthread_t在不同进程间可能会重复，sys_gettid实质是读取thread的pid，不会重复
 {
     return static_cast<int>(::syscall(SYS_gettid));

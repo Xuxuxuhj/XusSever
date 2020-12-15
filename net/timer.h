@@ -35,4 +35,4 @@ public:
     void delTimer(Channel* request);
 private:
     std::priority_queue<Timer*, std::vector<Timer*>, TimerCompareFunc> timeQueue_;
-}
+};
