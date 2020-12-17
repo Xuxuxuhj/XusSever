@@ -95,9 +95,8 @@ void EventLoop::handleEvents()//doing pending functors;
     callingPendingFunctor_=false;
 }
 
-void EventLoop::quit()
+void EventLoop::quit()//only do by manager of enentloop thread
 {
-    assert(isInLoopThread());
     shutDown_=true;
     wakeup();
 }
