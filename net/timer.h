@@ -39,6 +39,9 @@ public:
     void addTimer(Channel* request, int timeout);
     void delTimer(Channel* request);
 private:
+    void handleExpired();//cb of timerFd_ event
     std::priority_queue<Timer*, std::vector<Timer*>, TimerCompareFunc> timeQueue_;
     //Timer's lifetime is longer than connection, so use shared_ptr; 
+    int timerFd_;
+    Channel timerChannel;
 };

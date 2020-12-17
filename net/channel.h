@@ -1,5 +1,6 @@
 #pragma once
 #include<functional>
+#include<sys/epoll.h>
 #include"..//base/noncopyable.h"
 
 class Channel: noncopyable
@@ -36,8 +37,17 @@ public:
     {
         events_=events;
     }
+    void setRetEvents(uint32_t events)
+    {
+        retEvents_=events;
+    }
     bool isSameEventsAsLast()
     {
+        if(events_&EPOLLONESHOT)
+        {
+            lastEvents_=events_;
+            return false;
+        }
         bool ret=events_==lastEvents_;
         lastEvents_=events_;
         return ret;

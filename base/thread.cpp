@@ -92,7 +92,7 @@ bool Thread::is_thread_alive()
     return true;
 }
 
-//////not used
+//////not used in class Thread but used in EventLoop
 int gettid()//pthread_t在不同进程间可能会重复，sys_gettid实质是读取thread的pid，不会重复
 {
     return static_cast<int>(::syscall(SYS_gettid));
