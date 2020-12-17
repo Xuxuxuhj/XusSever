@@ -10,7 +10,7 @@ Epoll::Epoll()
 {
     efd_=epoll_create(MAXFDS);
     events_=std::vector<Channel*>(MAX_EVENT_NUM);
-    timeManager_=new timeManager_();
+    timeManager_=new TimerManager;
 }
 
 Epoll::~Epoll()
@@ -66,4 +66,14 @@ void Epoll::epoll_mod(Channel* request, int timeout)
         else
             return;
     }
+}
+
+std::vector<Channel*> poll()
+{
+
+}
+
+std::vector<Channel*> getRetEvents(int num)
+{
+    
 }

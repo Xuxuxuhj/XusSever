@@ -1,5 +1,5 @@
 #include"logfile.h"
-
+#include<string.h>
 
 File::File(const char* filename){
     FD_=fopen(filename, "ae");
@@ -26,7 +26,7 @@ void File::flush()
     fflush(FD_);
 }
     
-LogFile::LogFile(const char* filename, int flushInterval)
+LogFile::LogFile(char* filename, int flushInterval)
 {
     if(filename==NULL)
     {
@@ -34,6 +34,7 @@ LogFile::LogFile(const char* filename, int flushInterval)
         time(&t);
         filename=ctime(&t);
     }
+    strcat(filename, ".log");
     fd_=new File(filename);
     flushInterval_=flushInterval;
     count_=0;
