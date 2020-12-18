@@ -4,6 +4,7 @@
 static pthread_once_t once_init=PTHREAD_ONCE_INIT;
 static AsyncLog* asyncLog_=NULL;
 
+
 void initAsyncLog()
 {
     asyncLog_=new AsyncLog;

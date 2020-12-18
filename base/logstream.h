@@ -25,6 +25,7 @@ public:
     void reset()
     {
         cur_=data_;
+        memset(data_, 0, sizeof(data_));
     }
     char *current()
     {
