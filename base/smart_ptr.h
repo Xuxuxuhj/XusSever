@@ -100,11 +100,11 @@ namespace xu{
             else
                 return false;
         }
-        T& operator *()
+        T& operator *() const
         {
             return *(ptr_);
         }
-        T* operator ->()
+        T* operator ->() const
         {
             return ptr_;
         }
