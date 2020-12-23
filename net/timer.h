@@ -3,22 +3,29 @@
 #include<queue>
 #include<vector>
 #include"..//base/noncopyable.h"
+#include"..//base/smart_ptr.h"
 #include"channel.h"
+#include"connection.h"
+#include"eventloop.h"
 
 class Timer:noncopyable//owned by a connection
 {
 public:
-    Timer(Channel* channel, int timeout);
+    Timer(xu::shared_ptr<Connection> conn, int timeout);
     ~Timer();
     int getLimitTime(){
         return limitTime_;
     }
-    bool setDelete()
+    bool getDelete()
+    {
+        return isDeleted;
+    }
+    void setDelete()
     {
         isDeleted=true;
     }
 private:
-    Channel * channel_;
+    xu::shared_ptr<Connection> conn_;
     int limitTime_;
     bool isDeleted;
 };
@@ -34,14 +41,16 @@ public:
 class TimerManager:noncopyable
 {
 public:
-    TimerManager();
+    TimerManager(EventLoop* loop);
     ~TimerManager();
-    void addTimer(Channel* request, int timeout);
-    void delTimer(Channel* request);
+    void addTimer(xu::shared_ptr<Connection>  conn);
+    void delTimer(xu::shared_ptr<Connection>  conn);
 private:
     void handleExpired();//cb of timerFd_ event
-    std::priority_queue<Timer*, std::vector<Timer*>, TimerCompareFunc> timeQueue_;
+    void resetTimerFd();
+    EventLoop* loop_;
+    std::priority_queue<xu::shared_ptr<Timer>, std::vector<xu::shared_ptr<Timer>>, TimerCompareFunc> timerQueue_;
     //Timer's lifetime is longer than connection, so use shared_ptr; 
     int timerFd_;
-    Channel timerChannel;
+    Channel timerChannel_;
 };

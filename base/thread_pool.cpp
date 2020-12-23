@@ -43,6 +43,9 @@ ThreadPool::~ThreadPool()
     }
     //必须join前释放锁资源，否则所有thread拿不到锁
     //manager_退出前join所有thread
+#ifdef THREAD_POOL_TEST
+        std::cout<<"manager"<<manager_.tid()<<"joined"<<std::endl;
+#endif
     manager_.join();
     //manager_不能在threadpool析构的时候自动detach，因为manager_还要访问threadpool成员
 }
@@ -131,6 +134,9 @@ void ThreadPool::ajust_thread()
     //不需要加锁，因为只有他在管理
     for(auto &threadptr:threadArray_)
     {
+#ifdef THREAD_POOL_TEST
+        std::cout<<threadptr->tid()<<"joined"<<std::endl;
+#endif
         threadptr->join();//如果不join会在自动在在threadpool析构的时候array析构后thread析构中detach，但detach后thread访问不了delNum_
     }
 }
