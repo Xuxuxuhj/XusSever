@@ -1,10 +1,15 @@
 #include"eventloop.h"
 #include<unistd.h>
-
+#include<sys/eventfd.h>
 
 int create_eventfd()
 {
-
+    int fd=eventfd(0, EFD_NONBLOCK|EFD_CLOEXEC);
+    if(fd<0)
+    {
+        perror("eventfd error");
+    }
+    return fd;
 }
 
 EventLoop::EventLoop():
@@ -61,6 +66,12 @@ void EventLoop::queueInLoop(std::function<void()> &&cb)
 void EventLoop::wakeup()
 {
     //write sth. to eventfd
+    uint64_t one=1;
+    if(write(eventfd_, &one, sizeof(one))<0)
+    {
+        perror("eventfd write error");
+    }
+    return;
 }
 
 void EventLoop::addToPoller(Channel* request, int timeout)
@@ -81,7 +92,11 @@ void EventLoop::modifyPoller(Channel* request, int timeout)
 void EventLoop::handleEvents()//doing pending functors;
 {
     //TO DO
-    read(eventfd_, NULL, sizeof(int*));
+    uint64_t one;
+    if(read(eventfd_, &one, sizeof(one))<0)
+    {
+        perror("read eventfd error");
+    }
     std::vector<std::function<void()>> functorsToDo;
     {
         xu::lock_guard lg(mutex_);
